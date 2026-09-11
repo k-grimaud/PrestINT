@@ -33,12 +33,12 @@ Le projet couvre les prestations susceptibles d'être proposées par les clubs d
 
 ## Description fonctionnelle des besoins
 
-### Interface web côté client 
+### Interface web côté client
 consultation du catalogue des prestations et mise « au panier » de celles souhaitées.
 
- - la possibilité de voir la liste de prestation et les détails de prestations ne doivent pas necessiter de compte.
+ - la possibilité de voir la liste des prestations proposées et les détails associés ne doivent pas necessiter de compte.
 
- - page d'accueil : sélection du club dont on veut la prestation. pour chaque club on y voit le logo ainsi qu'une courte description du club. les prestations sont cliquables et permettent d'accéder à la page listant les prestations du club en question
+ - page d'accueil : sélection du club dont on veut la prestation. pour chaque club on y voit le logo ainsi qu'une courte description du club. Les prestations sont cliquables et permettent d'accéder à la page listant les prestations du club en question
 
  - page de prestations d'un clubs : liste les prestations proposées par le club, avec une courte description (et une photographie)
 
@@ -53,15 +53,15 @@ consultation du catalogue des prestations et mise « au panier » de celles souh
 ### Interface web côté club
 création et gestion des prestations par les personnes autorisées au sein des clubs et associations.
 
-- droits : Il faut différents droits, possiblement gérées par les responsables de prestation. L'administrateur général (présidents de club) peut gérer les droits des autres membres du club, les responsables de prestation peuvent avoir tous les droits pour une prestation donnée (l'administrateur général les a aussi par défaut), les membres des clubs en sont collaborateurs et peuvent voir l'avancée du projet, le graphe de planification. ils sont nommés par le responsable de prestation ou l'administrateur général.
+- droits : Il faut différents droits, possiblement gérés par les responsables de prestation. L'administrateur général (présidents de club) peut gérer les droits des autres membres du club, les responsables de prestation peuvent avoir tous les droits pour une prestation donnée (l'administrateur général les a aussi par défaut), les membres des clubs en sont collaborateurs et peuvent voir l'avancée du projet, le graphe de planification. ils sont nommés par le responsable de prestation ou l'administrateur général.
 
 - page d'accueil : permet de voir les prestations proposées. un bouton ajouter une prestation doit être présent. on peut accéder à la page de visualisation et modification ainsi qu'à celle de gestion des prestations de ce type en cours.
 
-- page de présentation d'une prestation (accessible depuis la page d'accueil). Elle est modifiable et permet d'accéder au formulaire de demande de prestation ainsi qu'au template de gestion interne. 
+- page de présentation d'une prestation (accessible depuis la page d'accueil). Elle est modifiable et permet d'accéder au formulaire de demande de prestation ainsi qu'au template de gestion interne.
 
 - page de template : permet de visualiser et modifier le template de gestion (étapes de la presta, dates, personnes impliquées(droits))
 
-- page de formulaire : permet de visualiser et modifier le formulaire donné au client. 
+- page de formulaire : permet de visualiser et modifier le formulaire donné au client.
 
 - lien client : le client ne peut pas faire de demande de prestation si cette prestation est en cours de modification. les modifications apparaissent sur la version client une fois effectuées.
 
@@ -80,10 +80,10 @@ création et gestion des prestations par les personnes autorisées au sein des c
 
 - **Diagrammes PERT / GANTT** :
   - création de « templates » de diagrammes réutilisables
-  - affectation de membres à des sous-tâches ;
+  - affectation de membres à des sous-tâches.
   - capitalisation sur les templates existants pour en dériver de nouveaux ou factoriser les parties communes
   - affichage du diagramme par le club, avec possibilité de modification si nécessaire.
-- **Notification des membres** impliqués dans une prestation lorsqu'ils doivent fournir un jalon clef ou réaliser une tâche ponctuelle
+- **Notification des membres** impliqués dans une prestation lorsqu'ils doivent fournir un jalon clef ou réaliser une tâche ponctuelle.
 
 ## Contraintes
 
