@@ -25,7 +25,7 @@ Trois difficultés principales ressortent :
 
 Concevoir un outil offrant une meilleure gestion des prestations (acceptation, refus, suivi, etc.) en adoptant une approche par **tickets**. Chaque demande devient un ticket disposant d'un état, d'un historique et d'interlocuteurs identifiés, ce qui permet :
 
-- un suivi lisible et partagé de chaque demande, de sa création à sa clôture ;
+- un suivi lisible et partagé de chaque demande, de sa création à sa clôture.
 - une capitalisation sur le long terme, les prestations passées servant de base aux suivantes.
 
 ## Périmètre du projet
