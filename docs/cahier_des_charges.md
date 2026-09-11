@@ -3,6 +3,7 @@
 Cahier des charges du projet informatique Python visant à faciliter la planification et la gestion des prestations des différents clubs de l'association du BDA.
 
 **Élèves :**
+
 - Erwan
 - Matteo
 - Krawlya
@@ -34,23 +35,25 @@ Le projet couvre les prestations susceptibles d'être proposées par les clubs d
 ## Description fonctionnelle des besoins
 
 ### Interface web côté client
-consultation du catalogue des prestations et mise « au panier » de celles souhaitées.
 
- - la possibilité de voir la liste des prestations proposées et les détails associés ne doivent pas necessiter de compte.
+consultation du catalogue des prestations et mise en favori de celles souhaitées.
 
- - page d'accueil : sélection du club dont on veut la prestation. pour chaque club on y voit le logo ainsi qu'une courte description du club. Les prestations sont cliquables et permettent d'accéder à la page listant les prestations du club en question
+- la possibilité de voir la liste des prestations proposées et les détails associés ne doivent pas necessiter de compte.
 
- - page de prestations d'un clubs : liste les prestations proposées par le club, avec une courte description (et une photographie)
+- page d'accueil : sélection du club dont on veut la prestation. pour chaque club on y voit le logo ainsi qu'une courte description du club. la liste des clubs sont cliquables et permettent d'accéder à la page listant les prestations du club en question
 
- - page de prestation : décrit la prestation en détail, avec  le nom du prestataire (le club), les délais prévisionnels et tout détail jugé utile par le prestataire. Le client peut soit directement faire une demande de prestation soit mettre au panier une prestation (dans le deuxième cas la prestation sera sauvegardée dans le panier sans avoir besoin de remplir le formulaire de prestation)
+- page de prestations d'un club : liste les prestations proposées par le club, avec une courte description (et une photographie)
 
- - demande de prestation : lorsqu'une demande de prestation est faite depuis la page de prestation ou depuis le panier, la page de demande de prestation est ouverte. Elle permet de remplir un formulaire pour préciser les demandes du client.
+- page de prestation : décrit la prestation en détail, avec le nom du prestataire (le club), les délais prévisionnels et tout détail jugé utile par le prestataire. Le client peut soit directement faire une demande de prestation soit mettre en favori la prestation
 
- - page des prestations en cours : lorsqu'une demande de prestation est validée par le client, un ticket est créé dans la page prestations en cours. chaque prestation est affichée avec son nom, le nom du prestataire, le statut de la prestation, une flèche permettant de voir le formulaire envoyé ainsi qu'un bouton permettant d'accéder à un chat réservé à cette prestation précise.
+- demande de prestation : lorsqu'une demande de prestation est faite depuis la page de prestation ou depuis la page favori, la page de demande de prestation est ouverte. Elle permet de remplir un formulaire pour préciser les demandes du client.
 
- - un onglet notifications permet d'accéder aux conversations ayant de nouveaux messages
+- page des prestations en cours : lorsqu'une demande de prestation est validée par le client, un ticket est créé dans la page prestations en cours. chaque prestation est affichée avec son nom, le nom du prestataire, le statut de la prestation, une flèche permettant de voir le formulaire envoyé ainsi qu'un bouton permettant d'accéder à un chat réservé à cette prestation précise.
+
+- un onglet notifications permet d'accéder aux conversations ayant de nouveaux messages
 
 ### Interface web côté club
+
 création et gestion des prestations par les personnes autorisées au sein des clubs et associations.
 
 - droits : Il faut différents droits, possiblement gérés par les responsables de prestation. L'administrateur général (présidents de club) peut gérer les droits des autres membres du club, les responsables de prestation peuvent avoir tous les droits pour une prestation donnée (l'administrateur général les a aussi par défaut), les membres des clubs en sont collaborateurs et peuvent voir l'avancée du projet, le graphe de planification. ils sont nommés par le responsable de prestation ou l'administrateur général.
@@ -65,11 +68,10 @@ création et gestion des prestations par les personnes autorisées au sein des c
 
 - lien client : le client ne peut pas faire de demande de prestation si cette prestation est en cours de modification. les modifications apparaissent sur la version client une fois effectuées.
 
-
 ### Système de notification pour l'attribution des prestations
 
-  - produire une synthèse de la prestation attribuée (budget, acteurs, lieux, dates, etc.) et en informer les utilisateurs concernés par une notification premier message dans le chat de la prestation ainsi que mail envoyé à la personne;
-  - signaler périodiquement l'avancée de la prestation aux utilisateurs.
+- produire une synthèse de la prestation attribuée (budget, acteurs, lieux, dates, etc.) et en informer les utilisateurs concernés par une notification premier message dans le chat de la prestation ainsi que mail envoyé à la personne;
+- signaler périodiquement l'avancée de la prestation aux utilisateurs.
 
 ### Tickets
 
@@ -91,7 +93,6 @@ création et gestion des prestations par les personnes autorisées au sein des c
 - L'outil prend la forme d'une **application web**, accessible aux clients comme aux membres des clubs.
 - Gestion des droits : distinction entre les utilisateurs clients et les personnes autorisées au sein des clubs et associations.
 - Sécurité : limiter le nombre de demandes qu'un même utilisateur peut effectuer sur une période donnée, afin d'empêcher les abus et les tentatives d'automatisation massive de l'envoi de demandes (attaques de type DDoS).
-
 
 ## Délais (date de réalisation attendue)
 
