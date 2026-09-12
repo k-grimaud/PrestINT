@@ -1,7 +1,15 @@
 # Warning: multiple occurencies may appear
 
 # ------- React -------
-.DS_STORE
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.local
+# End Logs
+
 node_modules
 scripts/flow/*/.flowconfig
 .flowconfig
