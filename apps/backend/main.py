@@ -2,7 +2,6 @@
 Minimal script to test the stack (empty main.py --> crash) and check whether psql is up or not
 """
 
-
 import os
 
 from fastapi import FastAPI
