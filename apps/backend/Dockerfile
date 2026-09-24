@@ -13,4 +13,4 @@ RUN --mount=type=cache,target=/root/.cache/uv uv sync --locked
 
 EXPOSE 8000
 
-CMD ["uv", "run", "--no-sync", uvicorn","src/main:app","--host","0.0.0.0"]
+CMD ["uv", "run", "--no-sync", "uvicorn", "--app-dir", "src", "main:app", "--host", "0.0.0.0"]

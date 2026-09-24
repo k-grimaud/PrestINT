@@ -5,9 +5,10 @@ services:
       DATABASE_URL: postgresql+psycopg://user:password@db:5432/prestint
     volumes:
       - ./apps/backend:/app
+      - /app/.venv
     ports:
       - "127.0.0.1:8000:8000"
-    command: uvicorn main:app --host 0.0.0.0 --reload
+    command: uv run --no-sync uvicorn --app-dir src main:app --host 0.0.0.0 --reload
     depends_on:
       db:
         condition: service_healthy
@@ -19,7 +20,6 @@ services:
       VITE_API_URL: "/api"
       VITE_PROXY_TARGET: "http://backend:8000"
     ports:
-      # Only port 5173 needs to be open on the server
       - "5173:5173"
     volumes:
       - ./apps/frontend:/app
