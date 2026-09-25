@@ -20,7 +20,6 @@ OTP_TTL = timedelta(minutes=5)
 OTP_MAX_ATTEMPTS = 5
 OTP_REQUESTS_PER_EMAIL = (3, timedelta(minutes=15))
 OTP_REQUESTS_PER_IP = (20, timedelta(hours=1))
-SESSION_TTL = timedelta(days=1)
 OTP_SECRET = os.environ["OTP_SECRET"].encode() # make sure you set it up in the .env --> otherwise crash
 
 
