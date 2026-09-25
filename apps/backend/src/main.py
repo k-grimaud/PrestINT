@@ -2,34 +2,17 @@ import os
 from typing import Annotated
 
 from fastapi import Depends, FastAPI
-from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy import create_engine, text
-from pydantic import BaseModel, StringConstraints
+from sqlalchemy import text
 
 
-TSP_MAIL = Annotated[
-    str,
-    StringConstraints(
-        strip_whitespace=True,
-        to_lower=True,
-        pattern=r"^[a-z]+(?:-[a-z]+)*\.[a-z]+(?:-[a-z]+)*@telecom-sudparis\.eu$"
-    )
-]
-
-
-class User(BaseModel):
-    username: str
-    email: str | None = None
-    full_name: str | None = None
-    disabled: bool | None = None
-
-class OtpRequest(BaseModel):
-    email: TSP_MAIL
+from authentification.routes import router as auth_router
+from authentification.session import get_current_user
+from infra.database import engine
+from infra.models.identity import Users
 
 
 app = FastAPI(openapi_url="/openapi.json" if os.getenv("DEV_DOCS") else None)
-engine = create_engine(os.environ["DATABASE_URL"])
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+app.include_router(auth_router)
 
 
 @app.get("/api/health")
@@ -37,21 +20,10 @@ def health():
     """
     Minimal script to test the app
     """
+
     with engine.connect() as conn:
         return {"db": conn.execute(text("SELECT 1")).scalar()}
 
-app.get("/auth/otp/request{email: TSP_MAIL}")
-def request_email_otp(email: TSP_MAIL):
-    pass
-
-app.get("/auth/otp/verify{email: TSP_MAIL, code: str}")
-def verify_token():
-    pass
-
-app.get("/auth/logout")
-def logout_user():
-    pass
-
 @app.get("/items")
-async def read_items(token: Annotated[str, Depends(oauth2_scheme)]):
-    return {"token": token}
+async def read_items(user: Annotated[Users, Depends(get_current_user)]):
+    return {"user": user}
