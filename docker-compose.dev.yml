@@ -1,4 +1,4 @@
-# Dev override: docker compose --env-file .env.dev -f docker-compose.yml -f docker-compose.dev.yml up --build
+# Dev override, auto-loaded via COMPOSE_FILE in .env: docker compose up --build
 services:
   backend:
     environment:
