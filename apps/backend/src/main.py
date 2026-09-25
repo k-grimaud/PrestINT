@@ -14,7 +14,7 @@ class User(BaseModel):
     disabled: bool | None = None
 
 
-app = FastAPI()
+app = FastAPI(openapi_url="/openapi.json" if os.getenv("DEV_DOCS") else None)
 engine = create_engine(os.environ["DATABASE_URL"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 

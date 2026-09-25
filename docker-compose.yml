@@ -3,12 +3,8 @@ services:
     build: ./apps/backend
     environment:
       DATABASE_URL: postgresql+psycopg://user:password@db:5432/prestint
-    volumes:
-      - ./apps/backend:/app
-      - /app/.venv
     ports:
       - "127.0.0.1:8000:8000"
-    command: uv run --no-sync uvicorn --app-dir src main:app --host 0.0.0.0 --reload
     depends_on:
       db:
         condition: service_healthy
@@ -37,7 +33,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d prestint"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5

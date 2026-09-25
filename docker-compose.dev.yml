@@ -1,0 +1,18 @@
+# Dev override: docker compose --env-file .env.dev -f docker-compose.yml -f docker-compose.dev.yml up --build
+services:
+  backend:
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      DEV_DOCS: ${DEV_DOCS}
+    volumes:
+      # Host code is live in the container; the image's .venv is kept
+      - ./apps/backend:/app
+      - /app/.venv
+    # No --no-sync: a uv.lock change only needs a restart, not a rebuild
+    command: uv run uvicorn --app-dir src main:app --host 0.0.0.0 --reload
+
+  db:
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
