@@ -5,6 +5,13 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       DEV_DOCS: ${DEV_DOCS}
       OTP_SECRET: ${OTP_SECRET}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      MAIL_FROM: ${MAIL_FROM:-}
+      BASE_URL: ${BASE_URL:-http://localhost:5173}
+      OTP_DEV_LOG: ${OTP_DEV_LOG:-}
     volumes:
       # Host code is live in the container; the image's .venv is kept
       - ./apps/backend:/app
@@ -17,3 +24,9 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+
+  # Catches every outgoing mail (no real delivery); UI at http://localhost:8025
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - "127.0.0.1:8025:8025"   # SMTP 1025 stays on the docker network only
