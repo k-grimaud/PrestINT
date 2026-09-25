@@ -18,7 +18,9 @@ services:
       - ./apps/backend:/app
       - /app/.venv
     # No --no-sync: a uv.lock change only needs a restart, not a rebuild
-    command: uv run uvicorn --app-dir src main:app --host 0.0.0.0 --reload
+    # Migrations run on every container start (no-op when up to date); --reload doesn't rerun them,
+    # so a new migration file needs `docker compose restart backend`
+    command: sh -c "uv run alembic upgrade head && uv run uvicorn --app-dir src main:app --host 0.0.0.0 --reload"
 
   db:
     environment:
