@@ -1,6 +1,7 @@
 """
 """
 
+import os
 import uuid
 from typing import Annotated
 
@@ -20,7 +21,8 @@ TSP_MAIL = Annotated[str, StringConstraints(
     pattern=r"^[a-z]+(?:-[a-z]+)*\.[a-z]+(?:-[a-z]+)*@telecom-sudparis\.eu$")]
 OTP_CODE = Annotated[str, StringConstraints(strip_whitespace=True, pattern=rf"^\d{{{OTP_LEN}}}$")]
 DB = Annotated[Session, Depends(get_db)]
-COOKIE_OPTS = dict(path="/", httponly=True, secure=True, samesite="lax")
+# Secure cookies need https; dev runs over plain http, so .env sets COOKIE_SECURE=0 there
+COOKIE_OPTS = dict(path="/", httponly=True, secure=os.getenv("COOKIE_SECURE", "1") != "0", samesite="lax")
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
