@@ -60,11 +60,21 @@ Erwan, Matteo, Krawlya — rendu le **9 décembre**.
 
 ## Lancer la stack
 
+### Configuration .env
+
+Un example de fichier .env est fournit dans .env.example
+
+Enlever le commentaire de .env:12 ("COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml") pour une utilisation developpeur
+
+> Pour le moment, l'app ne fonctionne que pour les dev
+
+### Lancer les conteneurs
+
 Prérequis : Docker Desktop.
 
 ```sh
-docker compose up --build   # première fois, ou après modification des dépendances
-docker compose up           # ensuite
+docker compose up --build -d   # première fois, ou après modification des dépendances
+docker compose up -d        # ensuite
 docker compose down         # arrêter
 docker compose down -v      # arrêter ET réinitialiser la base
 ```
