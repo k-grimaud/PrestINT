@@ -14,6 +14,7 @@ class Association(Base):
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     name: Mapped[str] = mapped_column(String(50))
+    status: Mapped[str] = mapped_column(String(15))
 
 
 class Users(Base):
@@ -35,7 +36,7 @@ class Permission(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("users.user_id"), primary_key=True
     )
-    permission: Mapped[str] = mapped_column(String(30))
+    permission: Mapped[str] = mapped_column(String(15))
 
 
 class Picture(Base):
@@ -44,7 +45,7 @@ class Picture(Base):
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     asso_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("association.asso_id"))
-    path: Mapped[str] = mapped_column(String(500))
+    path: Mapped[str] = mapped_column(String(512))
 
 
 class List_Service(Base):
@@ -56,7 +57,7 @@ class List_Service(Base):
     approximative_cost: Mapped[int] = mapped_column(Integer)
     approximative_time: Mapped[str] = mapped_column(String(50))
     description: Mapped[str] = mapped_column(String(255))
-    path: Mapped[str] = mapped_column(String(500))
+    path: Mapped[str] = mapped_column(String(512))
 
 
 class Ongoing_Service(Base):
@@ -66,8 +67,9 @@ class Ongoing_Service(Base):
     )
     asso_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("association.asso_id"))
     client_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.user_id"))
-    presta_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.user_id"))
-    type_presta_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True))
+    type_presta_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("list_service.list_service_id")
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
