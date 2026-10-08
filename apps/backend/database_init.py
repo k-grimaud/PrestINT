@@ -4,12 +4,11 @@ connexion = sqlite3.connect("prestint.db")
 curseur = connexion.cursor()
 
 curseur.execute("""
-CREATE TABLE IF NOT EXISTS produits (
+CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nom TEXT NOT NULL,
-    description TEXT,
-    prix REAL NOT NULL,
-    secret INTEGER NOT NULL DEFAULT 0
+    mail VARCHAR(50) UNIQUE,
+    password_hashed VARCHAR(500),
+    category VARCHAR(20)
 )
 """)
 
@@ -29,10 +28,10 @@ produits = [
     ),
 ]
 
-curseur.executemany(
-    "INSERT INTO produits (nom, description, prix, secret) VALUES (?, ?, ?, ?)",
-    produits,
-)
+# curseur.executemany(
+#     "INSERT INTO produits (nom, description, prix, secret) VALUES (?, ?, ?, ?)",
+#     produits,
+# )
 
 connexion.commit()
 connexion.close()

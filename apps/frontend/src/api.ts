@@ -5,6 +5,11 @@ export interface User {
   first_name: string
   last_name: string
 }
+export interface List_Service {
+  list_service_id: string
+  first_name: string
+  asso_id: string
+}
 
 export function post(path: string, body?: object) {
   return fetch(`${API}${path}`, {
