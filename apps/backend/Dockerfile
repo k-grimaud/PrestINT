@@ -7,9 +7,9 @@ WORKDIR /app
 COPY pyproject.toml uv.lock ./
 
 # Splitting dependencies (local / "online") to prevent useless rebuilds
-RUN --mount=type=cache,target=/root/.cache/uv uv sync --locked --no-install-project
+RUN --mount=type=cache,target=/root/.cache/uv uv sync --no-dev --locked --no-install-project
 COPY . .
-RUN --mount=type=cache,target=/root/.cache/uv uv sync --locked
+RUN --mount=type=cache,target=/root/.cache/uv uv sync --no-dev --locked
 
 EXPOSE 8000
 
