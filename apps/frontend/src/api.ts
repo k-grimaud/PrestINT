@@ -8,20 +8,21 @@ export interface User {
 }
 
 export interface Permission {
-  asso_id: number 
+  asso_id: string 
   user_id: number
   permission: string
 }
 
 export interface Picture {
   picture_id: number
-  asso_id: number
+  asso_id: string
   path: string
 }
 
 export interface List_Service {
   list_service_id: number
-  asso_id: number
+  asso_id: string
+  name: string
   approximative_cost: string
   approximative_time: string
   description: string
@@ -30,7 +31,7 @@ export interface List_Service {
 
 export interface Ongoing_Service {
   service_id: number
-  asso_id: number
+  asso_id: string
   client_id: number
   type_presta_id: number
   created_at: string

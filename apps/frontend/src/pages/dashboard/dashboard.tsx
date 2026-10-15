@@ -13,6 +13,8 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
       onLogout()
     } catch {
       setError('Serveur injoignable, réessayez.')
+    }
+    finally {
       setBusy(false)
     }
   }
