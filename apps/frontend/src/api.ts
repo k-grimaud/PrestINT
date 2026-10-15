@@ -28,7 +28,7 @@ export interface List_Service {
   path: string
 }
 
-export interface List_Service {
+export interface Ongoing_Service {
   service_id: number
   asso_id: number
   client_id: number

@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { post, type Prestation } from '../../api.ts'
+import { post, type User, type List_Service} from '../../api.ts'
 
-function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
+function Services({ user, list_service, onLogout }: { user: User; list_service : List_Service; onLogout: () => void }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
 
@@ -17,9 +17,21 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
     }
   }
 
+  async function service_data(list_service.list_service_id: number) {
+    setBusy(true)
+    setError('')
+    try {
+      await get('/services/')
+      onLogout()
+    } catch {
+      setError('Serveur injoignable, réessayez.')
+      setBusy(false)
+    }
+  }
+
   return (
     <>
-      <h1> PrestINT </h1>
+      <h1> aaaaa </h1>
       <h2 className="capitalize"> Bonjour {prestation.first_name} </h2>
 
       <div className="ticks"></div>
