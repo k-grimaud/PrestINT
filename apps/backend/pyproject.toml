@@ -27,4 +27,5 @@ package = false
 dev = [
     "black>=26.10.1",
     "ruff>=0.17.0",
+    "sqladmin>=0.32.0",
 ]
