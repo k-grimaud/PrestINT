@@ -1,0 +1,24 @@
+name: Backend
+
+on:
+  push:
+    paths:
+      - apps/backend/**
+      - .github/workflows/backend.yml
+  pull_request:
+    paths:
+      - apps/backend/**
+      - .github/workflows/backend.yml
+
+jobs:
+  backend-lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/backend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+      - run: uv sync --locked
+      - run: uv run black --check --diff .
+      - run: uv run ruff check .
