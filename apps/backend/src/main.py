@@ -4,13 +4,17 @@ from typing import Annotated
 from fastapi import Depends, FastAPI
 from sqlalchemy import text
 
-
 from authentification.routes import router as auth_router
 from authentification.session import get_current_user
 from infra.database import engine
-from infra.models.identity import Users, Permission, Picture, Ongoing_Service, List_Service
-from infra.models.audit import UserSession, AuditEvent, RateLimit, OtpCode
-
+from infra.models.audit import AuditEvent, OtpCode, RateLimit, UserSession
+from infra.models.identity import (
+    List_Service,
+    Ongoing_Service,
+    Permission,
+    Picture,
+    Users,
+)
 
 app = FastAPI(openapi_url="/openapi.json" if os.getenv("DEV_DOCS") else None)
 app.include_router(auth_router)
@@ -19,8 +23,7 @@ app.include_router(auth_router)
 if os.getenv("DEV_DOCS"):
     # sqladmin is only in dev dependancies
     # Thus if DEV_DOCS is set by error a ModuleNotFoundError is raised
-    from sqladmin import Admin
-    from sqladmin import ModelView
+    from sqladmin import Admin, ModelView
 
     admin = Admin(app, engine, base_url="/admin", title="PSQL Admin Panel")
 
@@ -32,6 +35,7 @@ if os.getenv("DEV_DOCS"):
     # Creating model and adding them to the admin view
     ## editable tables
     for m in [Users, Permission, Picture, Ongoing_Service, List_Service]:
+
         class View(ModelView, model=m):
             column_list = "__all__"
 
@@ -39,6 +43,7 @@ if os.getenv("DEV_DOCS"):
 
     ## read-only tables
     for m in [UserSession, AuditEvent, RateLimit, OtpCode]:
+
         class View(ReadOnlyView, model=m):
             column_list = "__all__"
 
@@ -53,6 +58,7 @@ def health():
 
     with engine.connect() as conn:
         return {"db": conn.execute(text("SELECT 1")).scalar()}
+
 
 @app.get("/items")
 async def read_items(user: Annotated[Users, Depends(get_current_user)]):
