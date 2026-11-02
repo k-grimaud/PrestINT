@@ -38,7 +38,7 @@ OTP_CODE = Annotated[
     str, StringConstraints(strip_whitespace=True, pattern=rf"^\d{{{OTP_LEN}}}$")
 ]
 DB = Annotated[Session, Depends(get_db)]
-# Secure cookies need https; dev runs over plain http, so .env sets COOKIE_SECURE=0 there
+# Secure cookies need https;
 COOKIE_OPTS = {
     "path": "/",
     "httponly": True,
