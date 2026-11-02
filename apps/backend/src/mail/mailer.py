@@ -53,7 +53,7 @@ def send_otp_mail(destination: str, code: str) -> None:
             code=code,
             email=destination,
             ttl_min=ttl,
-            base_url=os.getenv("BASE_URL", "http://localhost:5173"),
+            base_url=os.getenv("BASE_URL", "https://prestint.localhost"),
         ),
         subtype="html",
     )
