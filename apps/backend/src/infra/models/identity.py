@@ -10,9 +10,7 @@ from infra.database import Base
 
 class Association(Base):
     __tablename__ = "association"
-    asso_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    asso_id: Mapped[str] = mapped_column(String(36))
     name: Mapped[str] = mapped_column(String(50))
     status: Mapped[str] = mapped_column(String(15))
 
@@ -30,7 +28,7 @@ class Users(Base):
 
 class Permission(Base):
     __tablename__ = "permission"
-    asso_id: Mapped[uuid.UUID] = mapped_column(
+    asso_id: Mapped[str.UUID] = mapped_column(
         ForeignKey("association.asso_id"), primary_key=True
     )
     user_id: Mapped[uuid.UUID] = mapped_column(
@@ -44,7 +42,7 @@ class Picture(Base):
     picture_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    asso_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("association.asso_id"))
+    asso_id: Mapped[str] = mapped_column(ForeignKey("association.asso_id"))
     path: Mapped[str] = mapped_column(String(512))
 
 
@@ -53,7 +51,8 @@ class List_Service(Base):
     list_service_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    asso_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("association.asso_id"))
+    asso_id: Mapped[str] = mapped_column(ForeignKey("association.asso_id"))
+    name: Mapped[str] = mapped_column(String(255))
     approximative_cost: Mapped[int] = mapped_column(Integer)
     approximative_time: Mapped[str] = mapped_column(String(50))
     description: Mapped[str] = mapped_column(String(255))
@@ -65,7 +64,7 @@ class Ongoing_Service(Base):
     service_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    asso_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("association.asso_id"))
+    asso_id: Mapped[str] = mapped_column(ForeignKey("association.asso_id"))
     client_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.user_id"))
     type_presta_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("list_service.list_service_id")

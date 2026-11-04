@@ -1,64 +1,38 @@
-import { useState } from 'react'
-import { post, type User, type List_Service} from '../../api.ts'
+import { useEffect, useState } from 'react'
+import { get, type List_Service} from '../../api.ts'
 
-function Services({ user, list_service, onLogout }: { user: User; list_service : List_Service; onLogout: () => void }) {
+function Services({ service_id }: { service_id : number }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+  const [service, setService] = useState<List_Service | null>(null)
 
-  async function logout() {
+
+  async function service_data(service_id: number) {
     setBusy(true)
     setError('')
     try {
-      await post('/auth/logout')
-      onLogout()
+      const res = await get(`/services/${service_id}`)
+      if (!res.ok) throw new Error('Erreur serveur')
+      const service: List_Service = await res.json()
+      setService(service)
     } catch {
       setError('Serveur injoignable, réessayez.')
+    } finally {
       setBusy(false)
     }
   }
 
-  async function service_data(list_service.list_service_id: number) {
-    setBusy(true)
-    setError('')
-    try {
-      await get('/services/')
-      onLogout()
-    } catch {
-      setError('Serveur injoignable, réessayez.')
-      setBusy(false)
-    }
-  }
+  useEffect(() => {
+    service_data(service_id)
+  }, [service_id])
 
   return (
     <>
-      <h1> aaaaa </h1>
-      <h2 className="capitalize"> Bonjour {prestation.first_name} </h2>
+      <h1> service.name </h1>
 
       <div className="ticks"></div>
       <section className="boxes">
         <div>
-          <h2>Identité</h2>
-          <p className="capitalize">
-            {user.first_name} {user.last_name}
-          </p>
-        </div>
-        <div>
-          <h2>Adresse mail</h2>
-          <p>
-            <code>{user.email}</code>
-          </p>
-        </div>
-        <div>
-          <h2>Session</h2>
-          <p>Connecté</p>
-          <button type="button" className="counter" onClick={logout} disabled={busy}>
-            Se déconnecter
-          </button>
-          {error && (
-            <p className="login-error" role="alert">
-              {error}
-            </p>
-          )}
         </div>
       </section>
       <div className="ticks"></div>
@@ -67,4 +41,4 @@ function Services({ user, list_service, onLogout }: { user: User; list_service :
   )
 }
 
-export default Dashboard
+export default Services
