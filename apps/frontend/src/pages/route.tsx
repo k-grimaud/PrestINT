@@ -2,15 +2,14 @@ import { useEffect, useState } from 'react'
 import '../App.css'
 import { fetchMe, type User } from '../api.ts'
 import Dashboard from './dashboard/dashboard.tsx'
-import Navbar from "../components/navbar/Navbar.tsx";
-import Compte from "./compte/compte.tsx";
-
+import LoginPage from "./compte/login.tsx";
+import PageAcceuil from "./acceuil.tsx";
 
 
 function Route() {
     // undefined = still asking /me, null = logged out
     const [user, setUser] = useState<User | null | undefined>(undefined)
-    const [login, ]
+    const [showLogin, setShowLogin] = useState(false)
 
     useEffect(() => {
         fetchMe().then(setUser).catch(() => setUser(null))
@@ -31,13 +30,19 @@ function Route() {
     if (user === undefined) return null
 
     if (user) {
+        if (showLogin) {
+            return <LoginPage onLogin={setUser} />
+        }
         return <Dashboard user={user} onLogout={() => setUser(null)} />
     }
 
-    return (
-        <>
-        </>
-    )
+// not logged
+
+    if (showLogin) {
+        return <LoginPage onLogin={setUser} />
+    }
+
+    return (<PageAcceuil onLoginClick={() => setShowLogin(true)}/>)
 }
 
 export default Route

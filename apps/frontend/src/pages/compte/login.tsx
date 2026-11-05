@@ -1,10 +1,17 @@
 import { useEffect, useState } from 'react'
-import '../App.css'
+import '../../App.css'
 import { fetchMe, type User } from '../../api.ts'
-import Compte from './compte.tsx'
-import Dashboard from '../dashboard/dashboard.tsx'
-import Navbar from "../../components/navbar/Navbar.tsx";
-import PageAcceuil from "../acceuil.tsx";
+import Compte from "./compte.tsx";
+import Dashboard from "../dashboard/dashboard.tsx";
+
+
+function LoginPage({ onLogin }: { onLogin: (u: User) => void }) {
+  // undefined = still asking /me, null = logged out
+  const [user, setUser] = useState<User | null | undefined>(undefined)
+
+  useEffect(() => {
+    fetchMe().then(setUser).catch(() => setUser(null))
+  }, [])
 
   // The page follows the login state; keep the URL in sync with it (logged in -> /dashboard, else /)
   useEffect(() => {
@@ -18,28 +25,19 @@ import PageAcceuil from "../acceuil.tsx";
     return () => window.removeEventListener('popstate', sync)
   }, [user])
 
+  if (user === undefined) return null
 
-
-
-
-  if (user === undefined) return null // attend serveur
-
-  if (user) { // si uttilisateur connecte
+  if (user) {
     return <Dashboard user={user} onLogout={() => setUser(null)} />
   }
 
-  return ( // si pas uttilisateur connecte
-    <>
-      <Navbar/>
-      <h1> PrestINT </h1>
+  return (
+      <>
+        <h1> PrestINT </h1>
         <h2> Prestations des clubs de l'INT </h2>
         <Compte onLogin={setUser} />
-    </>
+      </>
   )
 }
 
-export default PageLogin
-<Compte onLogin={setUser} />
-    </>
-  )
-}
+export default LoginPage
