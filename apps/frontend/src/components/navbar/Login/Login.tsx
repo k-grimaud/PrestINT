@@ -1,4 +1,9 @@
+// src/components/navbar/Login/Login.tsx
+import { Link } from 'react-router-dom'
 
+export default function Login() {
+    return <Link to="/login">Login</Link>   // note: `to`, not `href`
+}
 
 const GoToLogin: React.FC = () =>  {
 
