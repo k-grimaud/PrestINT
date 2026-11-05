@@ -10,7 +10,7 @@ from infra.database import Base
 
 class Association(Base):
     __tablename__ = "association"
-    asso_id: Mapped[str] = mapped_column(String(36))
+    asso_id: Mapped[str] = mapped_column(String(50), primary_key=True)
     name: Mapped[str] = mapped_column(String(50))
     status: Mapped[str] = mapped_column(String(15))
 
@@ -21,6 +21,7 @@ class Users(Base):
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     email: Mapped[str] = mapped_column(String(255), unique=True)
+    password_hashed: Mapped[str] = mapped_column(String(500))
     first_name: Mapped[str] = mapped_column(String(50))
     last_name: Mapped[str] = mapped_column(String(50))
     __table_args__ = (Index("ux_users_email_lower", func.lower(email), unique=True),)
@@ -28,7 +29,7 @@ class Users(Base):
 
 class Permission(Base):
     __tablename__ = "permission"
-    asso_id: Mapped[str.UUID] = mapped_column(
+    asso_id: Mapped[str] = mapped_column(
         ForeignKey("association.asso_id"), primary_key=True
     )
     user_id: Mapped[uuid.UUID] = mapped_column(
@@ -66,7 +67,7 @@ class Ongoing_Service(Base):
     )
     asso_id: Mapped[str] = mapped_column(ForeignKey("association.asso_id"))
     client_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.user_id"))
-    type_presta_id: Mapped[uuid.UUID] = mapped_column(
+    type_service_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("list_service.list_service_id")
     )
     created_at: Mapped[datetime] = mapped_column(

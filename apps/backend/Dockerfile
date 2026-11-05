@@ -1,3 +1,4 @@
+
 FROM python:3.13-slim
 
 COPY --from=ghcr.io/astral-sh/uv:0.12.1 /uv /uvx /bin/
@@ -6,11 +7,20 @@ WORKDIR /app
 
 COPY pyproject.toml uv.lock ./
 
-# Splitting dependencies (local / "online") to prevent useless rebuilds
-RUN --mount=type=cache,target=/root/.cache/uv uv sync --locked --no-install-project
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked --no-install-project
+
 COPY . .
-RUN --mount=type=cache,target=/root/.cache/uv uv sync --locked
+
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked
+
+# Copier le script de démarrage
+COPY entrypoint.sh /app/entrypoint.sh
+
+# Donner les droits d'exécution
+RUN chmod +x /app/entrypoint.sh
 
 EXPOSE 8000
 
-CMD ["uv", "run", "--no-sync", "uvicorn", "--app-dir", "src", "main:app", "--host", "0.0.0.0"]
+CMD ["/app/entrypoint.sh"]
