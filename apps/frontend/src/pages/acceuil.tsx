@@ -3,19 +3,26 @@ import '../App.css'
 import { fetchMe, type User } from '../api.ts'
 import Compte from './compte/compte.tsx'
 import Dashboard from './dashboard/dashboard.tsx'
+import Erreur from './erreur/erreur.tsx'
+
+
+const KNOWN_PATHS = ['/', '/dashboard'] // used for skipping unknown paths
 
 
 function App() {
-  // undefined = still asking /me, null = logged out
   const [user, setUser] = useState<User | null | undefined>(undefined)
 
+  // used for HTTP error handling
+  const [failure, setFailure] = useState<number>() // status for when /auth/me fails
+  const notFound = !KNOWN_PATHS.includes(location.pathname) // cheking the URL on every render
+
   useEffect(() => {
-    fetchMe().then(setUser).catch(() => setUser(null))
+    fetchMe().then(setUser).catch((e) => setFailure(e.cause ?? 503)) // forcing a HTTP status for unknown causes
   }, [])
 
   // The page follows the login state; keep the URL in sync with it (logged in -> /dashboard, else /)
   useEffect(() => {
-    if (user === undefined) return
+    if (user === undefined || notFound) return
     const want = user ? '/dashboard' : '/'
     const sync = () => {
       if (location.pathname !== want) history.replaceState(null, '', want)
@@ -23,8 +30,10 @@ function App() {
     sync()
     window.addEventListener('popstate', sync)
     return () => window.removeEventListener('popstate', sync)
-  }, [user])
+  }, [user, notFound])
 
+  if (notFound) return <Erreur status={404} />
+  if (failure) return <Erreur status={failure} />
   if (user === undefined) return null
 
   if (user) {
