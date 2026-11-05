@@ -1,21 +1,11 @@
-#!/bin/sh
+FROM python:3.13-slim
+COPY --from=ghcr.io/astral-sh/uv:0.12.1 /uv /uvx /bin/
+WORKDIR /app
+COPY pyproject.toml uv.lock ./
+# Splitting dependencies (local / "online") to prevent useless rebuilds
+RUN --mount=type=cache,target=/root/.cache/uv uv sync --locked --no-install-project
+COPY . .
+RUN --mount=type=cache,target=/root/.cache/uv uv sync --locked
+EXPOSE 8000
 
-set -e
-
-echo "=================================="
-echo " Démarrage du backend"
-echo "=================================="
-
-# Appliquer les migrations Alembic
-echo "[1/2] Application des migrations..."
-uv run --no-sync alembic upgrade head
-
-# Démarrer le serveur FastAPI
-echo "[2/2] Démarrage de FastAPI..."
-exec uv run --no-sync uvicorn \
-    --app-dir src \
-    main:app \
-    --host 0.0.0.0 \
-    --port 8000
-
-pip install requests
+CMD ["sh", "entrypoint.sh", "--reload"]
