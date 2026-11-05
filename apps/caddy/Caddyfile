@@ -1,0 +1,28 @@
+{
+	local_certs
+	admin off       # No need for the admin API
+}
+
+(shared) {
+	encode gzip
+	header -Server
+	log {
+		output stdout
+		format console
+	}
+	request_header X-Request-Id {http.request.uuid}
+}
+
+# --- Frontend -------------------------------------------------------------------
+prestint.localhost {
+    tls internal
+    import shared
+    reverse_proxy frontend:5173 # default vite port
+}
+
+# --- Mail Mock -------------------------------------------------------------------
+mail.prestint.localhost {
+    tls internal
+    import shared
+    reverse_proxy mailpit:8025
+}

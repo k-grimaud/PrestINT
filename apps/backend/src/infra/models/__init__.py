@@ -1,1 +1,2 @@
-from . import audit, identity
+from . import audit as audit
+from . import identity as identity

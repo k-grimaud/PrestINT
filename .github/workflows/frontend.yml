@@ -1,0 +1,28 @@
+name: Frontend
+
+on:
+  push:
+    paths:
+      - apps/frontend/**
+      - .github/workflows/frontend.yml
+  pull_request:
+    paths:
+      - apps/frontend/**
+      - .github/workflows/frontend.yml
+
+jobs:
+  frontend-lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/frontend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: apps/frontend/.nvmrc
+      - run: npm ci
+      # runs oxlint from node_modules
+      - run: npm run lint
+      # checking TypeScript
+      - run: npx tsc -b

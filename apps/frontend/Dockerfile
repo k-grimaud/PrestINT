@@ -1,10 +1,11 @@
+# check that this version matches with that in apps/frontend/.nvmrc
 FROM node:22
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm ci
 
 COPY . .
 
