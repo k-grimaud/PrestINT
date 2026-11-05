@@ -1,26 +1,21 @@
+#!/bin/sh
 
-FROM python:3.13-slim
+set -e
 
-COPY --from=ghcr.io/astral-sh/uv:0.12.1 /uv /uvx /bin/
+echo "=================================="
+echo " Démarrage du backend"
+echo "=================================="
 
-WORKDIR /app
+# Appliquer les migrations Alembic
+echo "[1/2] Application des migrations..."
+uv run --no-sync alembic upgrade head
 
-COPY pyproject.toml uv.lock ./
+# Démarrer le serveur FastAPI
+echo "[2/2] Démarrage de FastAPI..."
+exec uv run --no-sync uvicorn \
+    --app-dir src \
+    main:app \
+    --host 0.0.0.0 \
+    --port 8000
 
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --locked --no-install-project
-
-COPY . .
-
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --locked
-
-# Copier le script de démarrage
-COPY entrypoint.sh /app/entrypoint.sh
-
-# Donner les droits d'exécution
-RUN chmod +x /app/entrypoint.sh
-
-EXPOSE 8000
-
-CMD ["/app/entrypoint.sh"]
+pip install requests
