@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import '../App.css'
 import { fetchMe, type User } from '../api.ts'
-import Compte from './compte/compte.tsx'
 import Dashboard from './dashboard/dashboard.tsx'
+import Navbar from "../components/navbar/Navbar.tsx";
 
 
 function App() {
@@ -33,9 +33,10 @@ function App() {
 
   return (
     <>
+      <Navbar/>
       <h1> PrestINT </h1>
         <h2> Prestations des clubs de l'INT </h2>
-        <Compte onLogin={setUser} />
+
     </>
   )
 }
