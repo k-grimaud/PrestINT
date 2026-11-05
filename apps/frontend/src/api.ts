@@ -16,5 +16,7 @@ export function post(path: string, body?: object) {
 
 export async function fetchMe(): Promise<User | null> {
   const res = await fetch(`${API}/auth/me`)
-  return res.ok ? res.json() : null
+  if (res.status == 401) return null
+  if (!res.ok) throw new Error('GET /auth/me failed', { cause: res.status })
+  return res.json()
 }
