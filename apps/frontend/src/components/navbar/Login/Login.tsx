@@ -1,16 +1,12 @@
-// src/components/navbar/Login/Login.tsx
-import { Link } from 'react-router-dom'
+import type React from 'react'
 
-export default function Login() {
-    return <Link to="/login">Login</Link>   // note: `to`, not `href`
-}
+type Props = { onLoginClick: () => void }
 
-const GoToLogin: React.FC = () =>  {
-
+const GoToLogin: React.FC<Props> = ({ onLoginClick }) => {
     return (
-        <>
-            <a href="pages/compte/login.tsx" className="navbar_choices">Login</a>
-        </>
+        <button type="button" className="navbar_choices" onClick={onLoginClick}>
+            Login
+        </button>
     )
 }
 
