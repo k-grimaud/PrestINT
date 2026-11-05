@@ -1,7 +1,7 @@
 import requests
 
 from sqlalchemy import text
-from src.infra.database import get_db
+from ..infra.database import get_db
 
 
 def dump_database():
