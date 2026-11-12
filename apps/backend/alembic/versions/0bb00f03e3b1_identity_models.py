@@ -22,7 +22,7 @@ def upgrade() -> None:
     """Upgrade schema."""
     op.create_table(
         "association",
-        sa.Column("asso_id", sa.String(length=36), nullable=False),
+        sa.Column("asso_id", sa.String(length=50), nullable=False),
         sa.Column("name", sa.String(length=50), nullable=False),
         sa.Column("status", sa.String(length=15), nullable=False),
         sa.PrimaryKeyConstraint("asso_id"),
@@ -31,14 +31,14 @@ def upgrade() -> None:
     op.create_table(
         "permission",
         sa.Column("asso_id", sa.String(length=36), nullable=False),
-        sa.Column("user_id", sa.Integer(), nullable=False),
+        sa.Column("user_id", sa.UUID, nullable=False),
         sa.ForeignKeyConstraint(
             ["asso_id"],
             ["association.asso_id"],
         ),
         sa.ForeignKeyConstraint(
             ["user_id"],
-            ["users.id"],
+            ["users.user_id"],
         ),
         sa.PrimaryKeyConstraint(
             "asso_id",
@@ -75,7 +75,7 @@ def upgrade() -> None:
         "ongoing_service",
         sa.Column("service_id", sa.Integer(), nullable=False, autoincrement=True),
         sa.Column("asso_id", sa.String(length=36), nullable=False),
-        sa.Column("client_id", sa.Integer(), nullable=False),
+        sa.Column("client_id", sa.UUID(), nullable=False),
         sa.Column("type_service_id", sa.Integer(), nullable=False),
         sa.Column(
             "created_at",
@@ -92,7 +92,7 @@ def upgrade() -> None:
         ),
         sa.ForeignKeyConstraint(
             ["client_id"],
-            ["users.id"],
+            ["users.user_id"],
         ),
         sa.ForeignKeyConstraint(
             ["type_service_id"],

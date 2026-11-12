@@ -31,7 +31,7 @@ def upgrade() -> None:
     )
     op.create_table(
         "users",
-        sa.Column("id", sa.Integer(), nullable=False, autoincrement=True),
+        sa.Column("user_id", sa.UUID(), nullable=False),
         sa.Column("email", sa.String(), nullable=False),
         sa.Column("first_name", sa.String(), nullable=False),
         sa.Column("last_name", sa.String(), nullable=False),
@@ -44,7 +44,7 @@ def upgrade() -> None:
             server_default=sa.text("now()"),
             nullable=False,
         ),
-        sa.PrimaryKeyConstraint("id"),
+        sa.PrimaryKeyConstraint("user_id"),
         sa.UniqueConstraint("email"),
     )
     op.execute("CREATE UNIQUE INDEX ux_users_email_lower ON users (lower(email))")
@@ -57,20 +57,20 @@ def upgrade() -> None:
             server_default=sa.text("now()"),
             nullable=False,
         ),
-        sa.Column("user_id", sa.Integer(), nullable=True),
+        sa.Column("user_id", sa.UUID(), nullable=True),
         sa.Column("ip", postgresql.INET(), nullable=False),
         sa.Column("event_type", sa.String(), nullable=False),
         sa.Column("detail", postgresql.JSONB(astext_type=sa.Text()), nullable=True),
         sa.ForeignKeyConstraint(
             ["user_id"],
-            ["users.id"],
+            ["users.user_id"],
         ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
         "sessions",
-        sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("user_id", sa.Integer(), nullable=False),
+        sa.Column("id", sa.UUID(), nullable=False),
+        sa.Column("user_id", sa.UUID(), nullable=False),
         sa.Column(
             "created_at",
             sa.DateTime(timezone=True),
@@ -81,7 +81,7 @@ def upgrade() -> None:
         sa.Column("revoked_at", sa.DateTime(timezone=True), nullable=True),
         sa.ForeignKeyConstraint(
             ["user_id"],
-            ["users.id"],
+            ["users.user_id"],
         ),
         sa.PrimaryKeyConstraint("id"),
     )
