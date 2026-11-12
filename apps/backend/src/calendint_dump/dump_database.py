@@ -52,12 +52,14 @@ def dump_database():
                 db.execute(
                     text("""
                         INSERT INTO users (
+                            user_id,
                             email,
                             first_name,
                             last_name,
                             is_admin
                         )
                         VALUES (
+                            gen_random_uuid(),
                             :email,
                             :first_name,
                             :last_name,
@@ -74,7 +76,7 @@ def dump_database():
                 )
                 user_data = db.execute(
                     text("""
-                    SELECT id FROM users WHERE email=:email
+                    SELECT user_id FROM users WHERE email=:email
                     """),
                     {
                         "email": email,
