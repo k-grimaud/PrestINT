@@ -28,7 +28,9 @@ function Services({ service_id }: { service_id : number }) {
 
   return (
     <>
-      <h1> service.name </h1>
+      <h1>{service?.name}</h1>
+      {busy && <p>Chargement…</p>}
+      {error && <p>{error}</p>}
 
       <div className="ticks"></div>
       <section className="boxes">

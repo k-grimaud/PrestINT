@@ -1,6 +1,6 @@
 import requests
-
 from sqlalchemy import text
+
 from ..infra.database import get_db
 
 

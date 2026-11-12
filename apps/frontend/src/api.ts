@@ -41,6 +41,10 @@ export interface Ongoing_Service {
 }
 
 
+export function get(path: string) {
+  return fetch(`${API}${path}`)
+}
+
 export function post(path: string, body?: object) {
   return fetch(`${API}${path}`, {
     method: 'POST',
