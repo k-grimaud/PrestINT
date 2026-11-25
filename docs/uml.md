@@ -28,13 +28,13 @@ classDiagram
     }
     class Picture {
         <<picture>>
-        +UUID picture_id PK
+        +int picture_id PK
         +varchar50 asso_id FK
         +varchar512 path
     }
     class List_Service {
         <<list_service>>
-        +UUID list_service_id PK
+        +int list_service_id PK
         +varchar50 asso_id FK
         +varchar255 name
         +int approximative_cost
@@ -44,10 +44,10 @@ classDiagram
     }
     class Ongoing_Service {
         <<ongoing_service>>
-        +UUID service_id PK
+        +int service_id PK
         +varchar50 asso_id FK
         +UUID client_id FK
-        +UUID type_service_id FK
+        +int type_service_id FK
         +timestamptz created_at défaut now()
         +timestamptz? end_at
         +varchar25 status
