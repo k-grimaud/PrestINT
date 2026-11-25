@@ -1,14 +1,14 @@
 export const API = import.meta.env.VITE_API_URL ?? '/api'
 
 export interface User {
-  user_id: number 
+  user_id: number
   email: string
   first_name: string
   last_name: string
 }
 
 export interface Permission {
-  asso_id: string 
+  asso_id: string
   user_id: number
   permission: string
 }
@@ -40,6 +40,9 @@ export interface Ongoing_Service {
   context: string
 }
 
+export function get(path: string) {
+  return fetch(`${API}${path}`)
+}
 
 export function post(path: string, body?: object) {
   return fetch(`${API}${path}`, {
