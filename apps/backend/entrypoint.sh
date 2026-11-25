@@ -1,21 +1,21 @@
-﻿
+
 #!/bin/sh
 
 set -e
 
 echo "=================================="
-echo " DÃ©marrage du backend"
+echo " Démarrage du backend"
 echo "=================================="
 
 # Appliquer les migrations Alembic
 echo "[1/2] Application des migrations..."
 uv run --no-sync alembic upgrade head
 
-# En parallÃ¨le : vÃ©rifie le dump Calend'INT au dÃ©marrage
-uv run --no-sync python -m src.calendint_dump.dump_database || echo "CalendINT : vÃ©rification Ã©chouÃ©e"
+# En parallèle : vérifie le dump Calend'INT au démarrage
+uv run --no-sync python -m src.calendint_dump.dump_database || echo "CalendINT : vérification échouée"
 
-# DÃ©marrer le serveur FastAPI
-echo "[2/2] DÃ©marrage de FastAPI..."
+# Démarrer le serveur FastAPI
+echo "[2/2] Démarrage de FastAPI..."
 exec uv run --no-sync uvicorn \
     --app-dir src \
     main:app \

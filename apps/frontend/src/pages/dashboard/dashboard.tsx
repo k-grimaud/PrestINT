@@ -13,46 +13,35 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
       onLogout()
     } catch {
       setError('Serveur injoignable, réessayez.')
-    }
-    finally {
+    } finally {
       setBusy(false)
     }
   }
 
   return (
     <>
-      <h1> PrestINT </h1>
-      <h2 className="capitalize"> Bonjour {user.first_name} </h2>
+      <h2 className="capitalize">Bonjour {user.first_name}</h2>
 
-      <div className="ticks"></div>
       <section className="boxes">
         <div>
-          <h2>Identité</h2>
+          <h3>Identité</h3>
           <p className="capitalize">
             {user.first_name} {user.last_name}
           </p>
         </div>
         <div>
-          <h2>Adresse mail</h2>
-          <p>
-            <code>{user.email}</code>
-          </p>
+          <h3>Adresse mail</h3>
+          <p>{user.email}</p>
         </div>
         <div>
-          <h2>Session</h2>
+          <h3>Session</h3>
           <p>Connecté</p>
           <button type="button" className="counter" onClick={logout} disabled={busy}>
             Se déconnecter
           </button>
-          {error && (
-            <p className="login-error" role="alert">
-              {error}
-            </p>
-          )}
+          {error && <p className="login-error">{error}</p>}
         </div>
       </section>
-      <div className="ticks"></div>
-      <section id="spacer"></section>
     </>
   )
 }
