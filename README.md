@@ -52,6 +52,7 @@ Erwan, Matteo, Krawlya — rendu le **9 décembre**.
 ```
 .
 ├── apps/
+│   ├── caddy/      # Caddyfile (reverse proxy, https)
 │   ├── frontend/   # Vite + React + TS, Dockerfile, .dockerignore
 │   └── backend/    # FastAPI, requirements.txt, Dockerfile, .dockerignore
 ├── docker-compose.yml
@@ -63,8 +64,6 @@ Erwan, Matteo, Krawlya — rendu le **9 décembre**.
 ### Configuration .env
 
 Un example de fichier .env est fournit dans .env.example
-
-Enlever le commentaire de .env:12 ("COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml") pour une utilisation developpeur
 
 > Pour le moment, l'app ne fonctionne que pour les dev
 
@@ -81,39 +80,165 @@ docker compose down -v      # arrêter ET réinitialiser la base
 
 | Service | URL | Remarque |
 |---|---|---|
-| Application | http://localhost:5173 | seul port exposé publiquement |
-| API (Swagger) | http://localhost:8000/docs | accessible uniquement depuis la machine hôte |
-| PostgreSQL | `127.0.0.1:5432` | `user` / `password` / base `prestint` — accessible uniquement depuis la machine hôte |
+| Application | https://prestint.localhost | via Caddy, seuls ports exposés publiquement : 443 (et 80, redirigé vers https) |
+| Mails (Mailpit) | https://mail.prestint.localhost | via Caddy, capture tous les mails envoyés |
+| API (Swagger) | http://localhost:8000/docs | mode dev uniquement : `DEV_DOCS=1` dans `.env` (déjà présent dans `.env.example`, laisser vide pour désactiver) — accessible uniquement depuis la machine hôte |
+| PostgreSQL | `localhost:5432` | identifiants dans `.env` — accessible uniquement depuis la machine hôte |
 
 Vérification rapide que tout communique :
 
 ```sh
-curl localhost:5173/api/health   # → {"db":1}
+curl -k https://prestint.localhost/api/health   # → {"db":1}
 ```
+
+> **Réseaux ignorés silencieusement.** Avec d'anciennes versions de Docker (constaté avec Engine 24 / Compose v2.19), un conteneur relié à plusieurs réseaux peut être créé sans l'un d'eux, sans aucune erreur (ex. `backend` sans `data` → `failed to resolve host 'db'`, `caddy` sans `mail_mock` → 502 sur Mailpit). Vérifier les réseaux d'un conteneur :
+>
+> ```sh
+> docker inspect -f '{{range $k,$v := .NetworkSettings.Networks}}{{$k}} {{end}}' prestint-backend-1
+> ```
+>
+> Si un réseau manque : `docker network connect prestint_<réseau> prestint-<service>-1`. Mettre à jour Docker Desktop corrige le problème durablement.
 
 ## Schéma de la stack
 
 ```
 Navigateur
-   │  http://localhost:5173
-   ▼
-┌──────────────┐  /api/*  ┌──────────────┐  DATABASE_URL  ┌──────────────┐
-│   frontend   │ ───────► │   backend    │ ─────────────► │      db      │
-│  Vite (dev)  │  proxy   │   FastAPI    │  psycopg       │ PostgreSQL 17│
-│    :5173     │          │    :8000     │                │    :5432     │
-└──────────────┘          └──────────────┘                └──────────────┘
-        réseau interne Docker Compose : les services se joignent par leur nom
+   │  https://prestint.localhost          https://mail.prestint.localhost
+   ▼                                                  │
+┌──────────────┐                                      │
+│    caddy     │ ◄────────────────────────────────────┘
+│    :443      │ ──────────────────────────────────────────┐
+└──────────────┘                                           ▼
+       │                                           ┌──────────────┐
+       ▼                                           │   mailpit    │
+┌──────────────┐  /api/*  ┌──────────────┐  SMTP   │ :8025 / 1025 │
+│   frontend   │ ───────► │   backend    │ ──────► └──────────────┘
+│  Vite (dev)  │  proxy   │   FastAPI    │
+│    :5173     │          │    :8000     │  DATABASE_URL  ┌──────────────┐
+└──────────────┘          └──────────────┘ ─────────────► │      db      │
+                                                          │ PostgreSQL 17│
+                                                          │    :5432     │
+                                                          └──────────────┘
+   réseaux : edge (caddy, frontend, backend), data interne (backend, db),
+             mail_mock interne (caddy, backend, mailpit)
 ```
 
-- **Un seul point d'entrée.** Le navigateur ne parle qu'à Vite (`:5173`). Tout appel vers `/api/*` est relayé par le proxy de Vite (`server.proxy` dans `vite.config.ts`) vers `http://backend:8000`, cible fournie par la variable `VITE_PROXY_TARGET`. Même origine côté navigateur → pas de CORS à gérer.
+- **Un seul point d'entrée.** Le navigateur ne parle qu'à Caddy (`:443`), qui relaie vers Vite (`frontend:5173`) ou Mailpit (`mailpit:8025`) selon le nom de domaine. Les certificats sont émis par l'autorité locale de Caddy : accepter l'avertissement du navigateur la première fois. Tout appel vers `/api/*` est relayé par le proxy de Vite (`server.proxy` dans `vite.config.ts`) vers `http://backend:8000`, cible fournie par la variable `VITE_PROXY_TARGET`. Même origine côté navigateur → pas de CORS à gérer.
 - **Backend → base.** Le backend lit `DATABASE_URL=postgresql+psycopg://user:password@db:5432/prestint`. Le nom `db` est résolu par le DNS interne de Compose.
 - **Ordre de démarrage.** `db` a un `healthcheck` (`pg_isready`) ; `backend` déclare `depends_on: db: condition: service_healthy` et ne démarre donc qu'une fois Postgres prêt.
-- **Ports.** `5173` est publié sur toutes les interfaces ; `8000` et `5432` ne sont liés qu'à `127.0.0.1` (confort de dev depuis la machine hôte, invisibles depuis l'extérieur).
+- **Ports.** Seuls `443` et `80` (Caddy) sont publiés sur toutes les interfaces ; `8000` et `5432` ne sont liés qu'à `127.0.0.1` (confort de dev depuis la machine hôte, invisibles depuis l'extérieur).
 - **Hot-reload.** Les dossiers `apps/backend` et `apps/frontend` sont montés dans les conteneurs : uvicorn tourne avec `--reload`, Vite fait du HMR. Un volume anonyme `/app/node_modules` conserve les modules Linux installés dans l'image plutôt que ceux de la machine hôte.
 - **Persistance.** Les données Postgres vivent dans le volume nommé `postgres_data` (supprimé par `down -v`).
 - **Images propres.** Les `.dockerignore` excluent `node_modules`, `dist`, `__pycache__`, `.venv`, `.env` du contexte de build.
 
+## Modèle de données
+
+Source : `apps/backend/src/infra/models/`. `?` = colonne nullable, stéréotype = nom de la table. Notes complémentaires : [`docs/uml.md`](docs/uml.md).
+
+```mermaid
+classDiagram
+    direction LR
+
+    class Association {
+        <<association>>
+        +varchar50 asso_id PK
+        +varchar50 name
+        +varchar15 status
+    }
+    class Users {
+        <<users>>
+        +UUID user_id PK
+        +varchar255 email UNIQUE sur lower(email)
+        +varchar500 password_hashed
+        +varchar50 first_name
+        +varchar50 last_name
+    }
+    class Permission {
+        <<permission>>
+        +varchar50 asso_id PK FK
+        +UUID user_id PK FK
+        +varchar15 permission
+    }
+    class Picture {
+        <<picture>>
+        +UUID picture_id PK
+        +varchar50 asso_id FK
+        +varchar512 path
+    }
+    class List_Service {
+        <<list_service>>
+        +UUID list_service_id PK
+        +varchar50 asso_id FK
+        +varchar255 name
+        +int approximative_cost
+        +varchar50 approximative_time
+        +varchar255 description
+        +varchar512 path
+    }
+    class Ongoing_Service {
+        <<ongoing_service>>
+        +UUID service_id PK
+        +varchar50 asso_id FK
+        +UUID client_id FK
+        +UUID type_service_id FK
+        +timestamptz created_at défaut now()
+        +timestamptz? end_at
+        +varchar25 status
+        +varchar255 context
+    }
+    class UserSession {
+        <<sessions>>
+        +UUID id PK
+        +UUID user_id FK
+        +timestamptz created_at défaut now()
+        +timestamptz expires_at
+        +timestamptz? revoked_at
+    }
+    class AuditEvent {
+        <<audit_events>>
+        +int id PK
+        +timestamptz occurred_at défaut now()
+        +UUID? user_id FK
+        +INET ip
+        +str event_type
+        +JSONB? detail
+    }
+    class RateLimit {
+        <<rate_limits>>
+        +str bucket PK
+        +int count défaut 0
+        +timestamptz expires_at
+    }
+    class OtpCode {
+        <<otp_codes>>
+        +UUID id PK
+        +varchar255 email INDEX
+        +varchar64 code_hash
+        +timestamptz created_at défaut now()
+        +timestamptz expires_at
+        +int attempts défaut 0
+        +timestamptz? consumed_at
+    }
+
+    Association "1" -- "0..*" Permission
+    Users "1" -- "0..*" Permission
+    Association "1" -- "0..*" Picture
+    Association "1" -- "0..*" List_Service
+    Association "1" -- "0..*" Ongoing_Service
+    Users "1" -- "0..*" Ongoing_Service : client_id
+    List_Service "1" -- "0..*" Ongoing_Service : type_service_id
+    Users "1" -- "0..*" UserSession
+    Users "0..1" -- "0..*" AuditEvent
+```
+
+**Légende — fichier source** (`apps/backend/src/infra/models/`)
+
+| Fichier | Classes |
+|---|---|
+| `identity.py` | Association, Users, Permission, Picture, List_Service, Ongoing_Service |
+| `audit.py` | UserSession, AuditEvent, RateLimit, OtpCode |
+
 ## Développement
 
 - Les routes backend doivent être préfixées par `/api` pour passer par le proxy. `apps/backend/main.py` contient pour l'instant un stub `GET /api/health` qui exécute `SELECT 1` sur la base.
-- Les identifiants Postgres de `docker-compose.yml` sont des valeurs de dev : à changer avant tout déploiement.
+- Les identifiants Postgres viennent de `.env` : changer les valeurs de `.env.example` avant tout déploiement.

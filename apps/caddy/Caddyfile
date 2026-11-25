@@ -1,0 +1,43 @@
+{
+	local_certs
+	admin off       # No need for the admin API
+}
+
+(shared) {
+	encode gzip
+	header -Server
+	log {
+		output stdout
+		format console
+	}
+	request_header X-Request-Id {http.request.uuid}
+
+	# Handling >500 HTTP errors that cannot be catched by Vite or FastAPI (related to reverse_proxy)
+	handle_errors {
+	header Content-Type "text/html; charset=utf-8"
+	respond <<HTML
+		<!doctype html>
+		<html lang="fr" style="color-scheme: light dark">
+		<meta charset="utf-8">
+		<title>{err.status_code} - PrestINT</title>
+		<body style="font: 18px/145% system-ui, sans-serif; text-align: center; margin-top: 20vh">
+		<h1>{err.status_code}</h1>
+		<p>PrestINT est momentanément indisponible, réessayez dans quelques instants.</p>
+		HTML {err.status_code}
+}
+
+}
+
+# --- Frontend -------------------------------------------------------------------
+prestint.localhost {
+    tls internal
+    import shared
+    reverse_proxy frontend:5173 # default vite port
+}
+
+# --- Mail Mock -------------------------------------------------------------------
+mail.prestint.localhost {
+    tls internal
+    import shared
+    reverse_proxy mailpit:8025
+}
