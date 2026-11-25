@@ -40,18 +40,14 @@ class Permission(Base):
 
 class Picture(Base):
     __tablename__ = "picture"
-    picture_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    picture_id: Mapped[int] = mapped_column(primary_key=True)
     asso_id: Mapped[str] = mapped_column(ForeignKey("association.asso_id"))
     path: Mapped[str] = mapped_column(String(512))
 
 
 class List_Service(Base):
     __tablename__ = "list_service"
-    list_service_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    list_service_id: Mapped[int] = mapped_column(primary_key=True)
     asso_id: Mapped[str] = mapped_column(ForeignKey("association.asso_id"))
     name: Mapped[str] = mapped_column(String(255))
     approximative_cost: Mapped[int] = mapped_column(Integer)
@@ -62,12 +58,10 @@ class List_Service(Base):
 
 class Ongoing_Service(Base):
     __tablename__ = "ongoing_service"
-    service_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    service_id: Mapped[int] = mapped_column(primary_key=True)
     asso_id: Mapped[str] = mapped_column(ForeignKey("association.asso_id"))
     client_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.user_id"))
-    type_service_id: Mapped[uuid.UUID] = mapped_column(
+    type_service_id: Mapped[int] = mapped_column(
         ForeignKey("list_service.list_service_id")
     )
     created_at: Mapped[datetime] = mapped_column(
