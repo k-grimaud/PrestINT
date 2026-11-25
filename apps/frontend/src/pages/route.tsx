@@ -3,9 +3,12 @@ import '../App.css'
 import { fetchMe, get, type User, type List_Service } from '../api.ts'
 import Dashboard from './dashboard/dashboard.tsx'
 import Compte from './compte/compte.tsx'
-import Navbar, { type Page } from '../components/navbar/Navbar.tsx'
+import Erreur from './erreur/erreur.tsx'
+import Navbar, { type Page } from './navbar/Navbar.tsx'
 import SearchBar from '../components/search/SearchBar.tsx'
 import ServiceList from '../components/services/ServiceList.tsx'
+
+const KNOWN_PATHS = ['/', '/dashboard']
 
 function Route() {
   // undefined = ask /me null = log out
@@ -14,9 +17,11 @@ function Route() {
   const [services, setServices] = useState<List_Service[]>([])
   const [search, setSearch] = useState('')
   const [error, setError] = useState('')
+  const [failure, setFailure] = useState<number>()
+  const notFound = !KNOWN_PATHS.includes(location.pathname)
 
   useEffect(() => {
-    fetchMe().then(setUser).catch(() => setUser(null))
+    fetchMe().then(setUser).catch((e) => setFailure(e.cause ?? 503))
   }, [])
 
   useEffect(() => {
@@ -45,6 +50,8 @@ function Route() {
     setPage(newPage)
   }
 
+  if (notFound) return <Erreur status={404} />
+  if (failure) return <Erreur status={failure} />
   if (user === undefined) return null
 
   const text = search.toLowerCase()
