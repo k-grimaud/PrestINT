@@ -129,7 +129,15 @@ curl -k https://prestint.localhost/api/health   # → {"db":1}
 > docker inspect -f '{{range $k,$v := .NetworkSettings.Networks}}{{$k}} {{end}}' prestint-backend-1
 > ```
 >
-> Si un réseau manque : `docker network connect --alias <service> prestint_<réseau> prestint-<service>-1`, puis `docker restart prestint-<service>-1`. Mettre à jour Docker Desktop corrige le problème durablement.
+> Si un réseau manque, reconnecter `backend` et `caddy` (les erreurs « already exists » sont sans conséquence) :
+>
+> ```sh
+> for n in edge data mail_mock; do docker network connect --alias backend prestint_$n prestint-backend-1; done
+> for n in edge mail_mock; do docker network connect --alias caddy prestint_$n prestint-caddy-1; done
+> docker restart prestint-backend-1 prestint-caddy-1
+> ```
+>
+> Attendre une quinzaine de secondes que le backend redémarre. À refaire après chaque recréation des conteneurs (`down` puis `up`, `up --build`) ; `docker compose stop` / `start` conservent les réseaux. Mettre à jour Docker Desktop corrige le problème durablement.
 
 ## Schéma de la stack
 
