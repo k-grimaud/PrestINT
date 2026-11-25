@@ -5,7 +5,7 @@ import Compte from "./compte.tsx";
 import Dashboard from "../dashboard/dashboard.tsx";
 
 
-function LoginPage({ onLogin }: { onLogin: (u: User) => void }) {
+function LoginPage() {
   // undefined = still asking /me, null = logged out
   const [user, setUser] = useState<User | null | undefined>(undefined)
 
