@@ -4,10 +4,11 @@ import { fetchMe, type User } from '../api.ts'
 import Compte from './compte/compte.tsx'
 import Dashboard from './dashboard/dashboard.tsx'
 import Erreur from './erreur/erreur.tsx'
+import Services from './services/services.tsx'
+
 
 
 const KNOWN_PATHS = ['/', '/dashboard'] // used for skipping unknown paths
-
 
 function App() {
   const [user, setUser] = useState<User | null | undefined>(undefined)
