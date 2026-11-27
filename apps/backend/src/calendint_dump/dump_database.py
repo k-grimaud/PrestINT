@@ -46,7 +46,7 @@ def dump_database():
                     last_name = " ".join(name_parts[1:])
                     email = full_name.replace(" ", ".") + "@telecom-sudparis.eu"
                 else:
-                    full_name = ""
+                    continue
 
                 # Insertion de l'utilisateur
                 db.execute(
