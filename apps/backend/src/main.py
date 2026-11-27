@@ -15,9 +15,11 @@ from infra.models.identity import (
     Picture,
     Users,
 )
+from services.routes import router as services_router
 
 app = FastAPI(openapi_url="/openapi.json" if os.getenv("DEV_DOCS") else None)
 app.include_router(auth_router)
+app.include_router(services_router)
 
 # If DEV_DOCS is set to 1 then a PSQL admin panel is built
 if os.getenv("DEV_DOCS"):

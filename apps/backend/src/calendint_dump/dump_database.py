@@ -120,6 +120,26 @@ def dump_database():
                     },
                 )
 
+        db.execute(text("""
+            INSERT INTO list_service (
+                asso_id, name, approximative_cost,
+                approximative_time, description, path
+            )
+            SELECT
+                a.asso_id,
+                'Tireuse mobile',
+                25,
+                '3 jours',
+                'Location et mise en place de tireuse mobile (prix de la livraison en supplément)',
+                ''
+            FROM association a
+            WHERE a.asso_id = '191c1827-d591-4338-9275-4054e3b93803'
+            AND NOT EXISTS (
+                SELECT 1 FROM list_service s
+                WHERE s.asso_id = a.asso_id AND s.name = 'Tireuse mobile'
+            )
+        """))
+
         # Validation des insertions
         db.commit()
 
