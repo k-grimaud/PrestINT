@@ -1,4 +1,6 @@
 import requests
+import re
+import unicodedata
 
 from sqlalchemy import text
 from requests.adapters import HTTPAdapter
@@ -49,7 +51,8 @@ def dump_database():
                     name_parts = full_name.split()
                     first_name = name_parts[0]
                     last_name = " ".join(name_parts[1:])
-                    email = full_name.replace(" ", ".") + "@telecom-sudparis.eu"
+                    ascii_name = unicodedata.normalize("NFKD", full_name).encode("ascii", "ignore").decode()
+                    email = re.sub(r"[^a-z0-9.-]", "", ascii_name.replace(" ", ".")) + "@telecom-sudparis.eu"
                 else:
                     continue
 
