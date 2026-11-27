@@ -70,3 +70,17 @@ class Ongoing_Service(Base):
     end_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     status: Mapped[str] = mapped_column(String(25))
     context: Mapped[str] = mapped_column(String(255))
+
+
+class Message(Base):
+    __tablename__ = "message"
+    message_id: Mapped[int] = mapped_column(primary_key=True)
+    service_id: Mapped[int] = mapped_column(ForeignKey("ongoing_service.service_id"))
+    sender_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.user_id"))
+    message: Mapped[str] = mapped_column(String(1000))
+    delivered_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )   
+    read_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
