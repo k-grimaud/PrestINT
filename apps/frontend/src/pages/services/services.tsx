@@ -1,20 +1,23 @@
 import { useEffect, useState } from 'react'
 import { get, type List_Service} from '../../api.ts'
 
-function Services({ service_id }: { service_id : number }) {
+import SearchBar from '../../components/search/SearchBar.tsx'
+import ServiceList from '../../components/services/ServiceList.tsx'
+
+function Services() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const [service, setService] = useState<List_Service | null>(null)
-
-
-  async function service_data(service_id: number) {
+  const [services, setServices] = useState<List_Service | null>(null)
+  const [search, setSearch] = useState('')
+  
+  async function services_data() {
     setBusy(true)
     setError('')
     try {
-      const res = await get(`/services/${service_id}`)
+      const res = await get(`/service`)
       if (!res.ok) throw new Error('Erreur serveur')
-      const service: List_Service = await res.json()
-      setService(service)
+      const services: List_Service = await res.json()
+      setServices(services)
     } catch {
       setError('Serveur injoignable, réessayez.')
     } finally {
@@ -22,13 +25,22 @@ function Services({ service_id }: { service_id : number }) {
     }
   }
 
+  const text = search.toLowerCase()
+  const results = (services ?? []).filter(
+    (service) =>
+      service.name.toLowerCase().includes(text) ||
+      service.asso_id.toLowerCase().includes(text)
+  )
+
   useEffect(() => {
-    service_data(service_id)
-  }, [service_id])
+    services_data()
+  }, [])
 
   return (
     <>
-      <h1>{service?.name}</h1>
+      <h2>Prestations des clubs de l'INT</h2>
+      <SearchBar value={search} onChange={setSearch} />
+          {error ? <p>{error}</p> : <ServiceList services={results} />}
       {busy && <p>Chargement…</p>}
       {error && <p>{error}</p>}
 
