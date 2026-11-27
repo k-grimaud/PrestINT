@@ -1,5 +1,10 @@
 import requests
+import re
+import unicodedata
+
 from sqlalchemy import text
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
 
 from ..infra.database import get_db
 
@@ -7,10 +12,12 @@ from ..infra.database import get_db
 def dump_database():
     db_generator = get_db()
     db = next(db_generator)
+    session = requests.Session()
+    session.mount("https://", HTTPAdapter(max_retries=Retry(total=3, backoff_factor=1))) # retrying when a connection drops
 
     try:
         # Récupération des associations
-        response = requests.get("https://cal.minet.net/api/organizations", timeout=30)
+        response = session.get("https://cal.minet.net/api/organizations", timeout=30)
         response.raise_for_status()
 
         list_association = response.json()
@@ -31,7 +38,7 @@ def dump_database():
             )
 
             # Récupération des membres
-            response = requests.get(
+            response = session.get(
                 f"https://cal.minet.net/api/organizations/{asso_id}/members", timeout=30
             )
             response.raise_for_status()
@@ -44,9 +51,10 @@ def dump_database():
                     name_parts = full_name.split()
                     first_name = name_parts[0]
                     last_name = " ".join(name_parts[1:])
-                    email = full_name.replace(" ", ".") + "@telecom-sudparis.eu"
+                    ascii_name = unicodedata.normalize("NFKD", full_name).encode("ascii", "ignore").decode()
+                    email = re.sub(r"[^a-z0-9.-]", "", ascii_name.replace(" ", ".")) + "@telecom-sudparis.eu"
                 else:
-                    full_name = ""
+                    continue
 
                 # Insertion de l'utilisateur
                 db.execute(

@@ -35,7 +35,7 @@ class Permission(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("users.user_id"), primary_key=True
     )
-    permission: Mapped[str] = mapped_column(String(15))
+    permission: Mapped[str | None] = mapped_column(String(15))
 
 
 class Picture(Base):
