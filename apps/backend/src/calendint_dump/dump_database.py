@@ -1,9 +1,9 @@
-import requests
 import re
 import unicodedata
 
-from sqlalchemy import text
+import requests
 from requests.adapters import HTTPAdapter
+from sqlalchemy import text
 from urllib3.util import Retry
 
 from ..infra.database import get_db
@@ -13,7 +13,9 @@ def dump_database():
     db_generator = get_db()
     db = next(db_generator)
     session = requests.Session()
-    session.mount("https://", HTTPAdapter(max_retries=Retry(total=3, backoff_factor=1))) # retrying when a connection drops
+    session.mount(
+        "https://", HTTPAdapter(max_retries=Retry(total=3, backoff_factor=1))
+    )  # retrying when a connection drops
 
     try:
         # Récupération des associations
@@ -51,8 +53,15 @@ def dump_database():
                     name_parts = full_name.split()
                     first_name = name_parts[0]
                     last_name = " ".join(name_parts[1:])
-                    ascii_name = unicodedata.normalize("NFKD", full_name).encode("ascii", "ignore").decode()
-                    email = re.sub(r"[^a-z0-9.-]", "", ascii_name.replace(" ", ".")) + "@telecom-sudparis.eu"
+                    ascii_name = (
+                        unicodedata.normalize("NFKD", full_name)
+                        .encode("ascii", "ignore")
+                        .decode()
+                    )
+                    email = (
+                        re.sub(r"[^a-z0-9.-]", "", ascii_name.replace(" ", "."))
+                        + "@telecom-sudparis.eu"
+                    )
                 else:
                     continue
 
@@ -107,7 +116,7 @@ def dump_database():
                     {
                         "asso_id": asso_id,
                         "user_id": user_data.scalar_one(),
-                        "user_role": user["role"]
+                        "user_role": user["role"],
                     },
                 )
 
