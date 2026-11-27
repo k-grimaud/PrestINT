@@ -1,9 +1,9 @@
-import requests
 import re
 import unicodedata
 
-from sqlalchemy import text
+import requests
 from requests.adapters import HTTPAdapter
+from sqlalchemy import text
 from urllib3.util import Retry
 
 from ..infra.database import get_db
@@ -82,7 +82,7 @@ def dump_database():
                             :last_name,
                             :is_admin
                         )
-                        ON CONFLICT (email) DO NOTHING; 
+                        ON CONFLICT (email) DO NOTHING;
                     """),
                     {
                         "email": email,
@@ -103,17 +103,20 @@ def dump_database():
                     text("""
                         INSERT INTO permission (
                             asso_id,
-                            user_id
+                            user_id,
+                            permission
                         )
                         VALUES (
                             :asso_id,
-                            :user_id
+                            :user_id,
+                            :user_role
                         )
-                        ON CONFLICT DO NOTHING; 
+                        ON CONFLICT (asso_id, user_id) DO UPDATE SET permission = EXCLUDED.permission;
                     """),
                     {
                         "asso_id": asso_id,
                         "user_id": user_data.scalar_one(),
+                        "user_role": user["role"],
                     },
                 )
 
