@@ -5,6 +5,7 @@ from fastapi import Depends, FastAPI
 from sqlalchemy import text
 
 from authentification.routes import router as auth_router
+from services.routes import router as services_router
 from authentification.session import get_current_user
 from infra.database import engine
 from infra.models.audit import AuditEvent, OtpCode, RateLimit, UserSession
@@ -18,6 +19,7 @@ from infra.models.identity import (
 
 app = FastAPI(openapi_url="/openapi.json" if os.getenv("DEV_DOCS") else None)
 app.include_router(auth_router)
+app.include_router(services_router)
 
 # If DEV_DOCS is set to 1 then a PSQL admin panel is built
 if os.getenv("DEV_DOCS"):

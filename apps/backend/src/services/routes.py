@@ -1,7 +1,9 @@
 import os
 from typing import Annotated
 
-from fastapi import Depends, FastAPI
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from infra.database import get_db
 from sqlalchemy import text
 
 from authentification.routes import router as auth_router
@@ -16,16 +18,12 @@ from infra.models.identity import (
     Users,
 )
 
-app = FastAPI(openapi_url="/openapi.json" if os.getenv("DEV_DOCS") else None)
-app.include_router(auth_router)
 
+router = APIRouter(prefix="/api/services", tags=["services"])
 
-@app.get("/service")
-async def get_service():
+@router.get("")
+def get_service(db: Annotated[Session, Depends(get_db)]) -> dict:
     with engine.connect() as conn:
 
         test = {"db": conn.execute(text("SELECT * FROM list_service;")).scalar()}
-        print("/n/n/n/n/n/n")
-        print(test)
-        print("/n/n/n/n/n/n")
         return test
