@@ -1,5 +1,8 @@
 import requests
+
 from sqlalchemy import text
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
 
 from ..infra.database import get_db
 
@@ -7,10 +10,12 @@ from ..infra.database import get_db
 def dump_database():
     db_generator = get_db()
     db = next(db_generator)
+    session = requests.Session()
+    session.mount("https://", HTTPAdapter(max_retries=Retry(total=3, backoff_factor=1))) # retrying when a connection drops
 
     try:
         # Récupération des associations
-        response = requests.get("https://cal.minet.net/api/organizations", timeout=30)
+        response = session.get("https://cal.minet.net/api/organizations", timeout=30)
         response.raise_for_status()
 
         list_association = response.json()
@@ -31,7 +36,7 @@ def dump_database():
             )
 
             # Récupération des membres
-            response = requests.get(
+            response = session.get(
                 f"https://cal.minet.net/api/organizations/{asso_id}/members", timeout=30
             )
             response.raise_for_status()
