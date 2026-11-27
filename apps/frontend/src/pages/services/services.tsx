@@ -15,6 +15,9 @@ function Services() {
     setError('')
     try {
       const res = await get(`/service`)
+      console.log('test')
+      console.log(res.json())
+      console.log('test')
       if (!res.ok) throw new Error('Erreur serveur')
       const services: List_Service = await res.json()
       setServices(services)

@@ -13,7 +13,9 @@ def dump_database():
     db_generator = get_db()
     db = next(db_generator)
     session = requests.Session()
-    session.mount("https://", HTTPAdapter(max_retries=Retry(total=3, backoff_factor=1))) # retrying when a connection drops
+    session.mount(
+        "https://", HTTPAdapter(max_retries=Retry(total=3, backoff_factor=1))
+    )  # retrying when a connection drops
 
     try:
         # Récupération des associations
@@ -51,8 +53,15 @@ def dump_database():
                     name_parts = full_name.split()
                     first_name = name_parts[0]
                     last_name = " ".join(name_parts[1:])
-                    ascii_name = unicodedata.normalize("NFKD", full_name).encode("ascii", "ignore").decode()
-                    email = re.sub(r"[^a-z0-9.-]", "", ascii_name.replace(" ", ".")) + "@telecom-sudparis.eu"
+                    ascii_name = (
+                        unicodedata.normalize("NFKD", full_name)
+                        .encode("ascii", "ignore")
+                        .decode()
+                    )
+                    email = (
+                        re.sub(r"[^a-z0-9.-]", "", ascii_name.replace(" ", "."))
+                        + "@telecom-sudparis.eu"
+                    )
                 else:
                     continue
 
@@ -107,6 +116,26 @@ def dump_database():
                         "user_id": user_data.scalar_one(),
                     },
                 )
+
+        db.execute(text("""
+            INSERT INTO list_service (
+                asso_id, name, approximative_cost,
+                approximative_time, description, path
+            )
+            SELECT
+                a.asso_id,
+                'Tireuse mobile',
+                25,
+                '3 jours',
+                'Location et mise en place de tireuse mobile (prix de la livraison en supplément)',
+                ''
+            FROM association a
+            WHERE a.asso_id = '191c1827-d591-4338-9275-4054e3b93803'
+            AND NOT EXISTS (
+                SELECT 1 FROM list_service s
+                WHERE s.asso_id = a.asso_id AND s.name = 'Tireuse mobile'
+            )
+        """))
 
         # Validation des insertions
         db.commit()
