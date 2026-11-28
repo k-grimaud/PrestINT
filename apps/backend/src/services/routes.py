@@ -1,8 +1,6 @@
 from typing import Annotated
-from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, Field, model_validator
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -11,30 +9,7 @@ from infra.database import engine, get_db
 from infra.models.identity import List_Service, Users
 
 from .services import EDIT_ROLES, READ_ROLES, get_user_role
-
-
-class Step(BaseModel):
-    id: int
-    name: str = Field(min_length=1, max_length=100)
-    duration_days: int = Field(ge=0, le=365)
-    assignee_id: UUID | None = None
-
-
-class Template(BaseModel):
-    steps: list[Step] = Field(max_length=20)
-
-    @model_validator(mode="after")
-    def unique_ids(self):
-        """
-        Making sure a template is described by a succession of steps without duplicate IDs
-        """
-        ids = [step.id for step in self.steps]
-
-        if len(ids) != len(set(ids)):
-            raise ValueError("step ids must be unique")
-
-        return self
-
+from .template import Template
 
 DB = Annotated[Session, Depends(get_db)]
 CurrentUser = Annotated[Users, Depends(get_current_user)]
