@@ -1,6 +1,7 @@
 // Defining custom messages for some HTTP error codes
 const MESSAGES: Record<number, string> = {
     404: "Cette page n'existe pas.",
+    403: "Votre rôle ne permet pas d'accéder à cette fonctionnalité",
     500: "Une erreur est survenue, réessayez plus tard.",
     502:"Le serveur ne répond pas, réessayez dans quelques instants.",
     503:"Serveur injoignable, réessayez à nouveau dans quelques instants.",
