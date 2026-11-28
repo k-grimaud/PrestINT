@@ -1,12 +1,10 @@
-from typing import Literal
 from uuid import UUID
 
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import select
 
-from infra.models.identity import Permission
+from infra.models.identity import Permission, Role
 
-Role = Literal["org_admin", "org_member", "org_viewer"]
 READ_ROLES: set[Role] = {"org_admin", "org_member"}
 EDIT_ROLES: set[Role] = {"org_admin"}
 

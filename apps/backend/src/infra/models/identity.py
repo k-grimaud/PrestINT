@@ -1,12 +1,14 @@
 import uuid
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 
 from sqlalchemy import DateTime, ForeignKey, Index, Integer, String, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from infra.database import Base
+
+Role = Literal["org_admin", "org_member", "org_viewer"]
 
 
 class Association(Base):
@@ -36,7 +38,7 @@ class Permission(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("users.user_id"), primary_key=True
     )
-    permission: Mapped[str | None] = mapped_column(String(15))
+    permission: Mapped[Role | None] = mapped_column(String(15))
 
 
 class Picture(Base):
